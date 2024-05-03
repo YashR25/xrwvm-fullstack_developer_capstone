@@ -17,6 +17,7 @@ mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
 const Reviews = require('./review');
 
 const Dealerships = require('./dealership');
+const dealership = require('./dealership');
 
 try {
   Reviews.deleteMany({}).then(()=>{
@@ -59,16 +60,48 @@ app.get('/fetchReviews/dealer/:id', async (req, res) => {
 // Express route to fetch all dealerships
 app.get('/fetchDealers', async (req, res) => {
 //Write your code here
+    try {
+        const dealerships = await Dealerships.find();
+        return res.json(dealerships);
+    } catch (error) {
+        return res.status(500).json({error: 'Internal server error!'})
+    }
 });
 
 // Express route to fetch Dealers by a particular state
 app.get('/fetchDealers/:state', async (req, res) => {
 //Write your code here
+    const state = req.params.state;
+    if(!state){
+        return res.status(401).json({error: 'state is required!'})
+    }
+    try {
+        const dealer = await Dealerships.findOne({state});
+        if(!dealer){
+            return res.status(404).json({error: 'No dealer found!'})
+        }
+        return res.json(dealer);
+    } catch (error) {
+        return res.status(500).json({error: 'Internal server error'})        
+    }
 });
 
 // Express route to fetch dealer by a particular id
 app.get('/fetchDealer/:id', async (req, res) => {
 //Write your code here
+    const id = req.params.id;
+    try {
+        const dealer = await Dealerships.findOne({id})    
+        if(!dealer){
+            return res.status(404).json({error: 'Dealer not found!'})
+        }
+        return res.json(dealer);
+
+    } catch (error) {
+        return res.status(500).json({error: 'Internal server error'})
+    }
+    
+
 });
 
 //Express route to insert review
