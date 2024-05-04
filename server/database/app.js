@@ -76,7 +76,7 @@ app.get('/fetchDealers/:state', async (req, res) => {
         return res.status(401).json({error: 'state is required!'})
     }
     try {
-        const dealer = await Dealerships.findOne({state});
+        const dealer = await Dealerships.find({state});
         if(!dealer){
             return res.status(404).json({error: 'No dealer found!'})
         }
